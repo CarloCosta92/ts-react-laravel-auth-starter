@@ -1,9 +1,12 @@
 <?php
 
+use App\Http\Requests\LoginRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\RegisterRequest;
+
 
 Route::middleware("auth:sanctum")->get("/user", function (Request $request) {
     return response()->json([
@@ -15,12 +18,8 @@ Route::middleware("auth:sanctum")->get("/user", function (Request $request) {
     ]);
 });
 
-Route::post("/register", function (Request $request) {
-    $validated = $request->validate([
-        "name" => "required|string",
-        "email" => "required|string|email|unique:users",
-        "password" => "required|string|min:8"
-    ]);
+Route::post("/register", function (RegisterRequest $request) {
+   $validated = $request->validated();
 
     $user = User::create([
         "name" => $validated["name"],
@@ -43,11 +42,8 @@ Route::post("/register", function (Request $request) {
 
 
 
-Route::post("/login", function (Request $request) {
-    $validated = $request->validate([
-        "email" => "required|string|email",
-        "password" => "required|string"
-    ]);
+Route::post("/login", function (LoginRequest $request) {
+    $validated = $request->validated();
 
     $user = User::where("email", $validated["email"])->first();
 

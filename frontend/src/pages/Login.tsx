@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { login } from "../api";
 import { useAuth } from "../AuthContext";
 
@@ -43,6 +43,9 @@ const res = await login(email, password);
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
+          <p>
+            Non hai un account? <Link to="/register">Registrati</Link>
+          </p>
           {error && <p className="error">{error}</p>}
           <button className="btn" type="submit" style={{ width: "100%" }}>
             Accedi

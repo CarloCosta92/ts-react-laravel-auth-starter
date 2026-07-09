@@ -15,18 +15,27 @@ interface AuthData {
   token: string;
 }
 
+export class ApiError extends Error {
+  data: Record<string, string[]> | null;
+  constructor(message: string, data: Record<string, string[]> | null) {
+    super(message);
+    this.data = data;
+  }
+}
+
 export async function register(
   name: string,
   email: string,
-  password: string
+  password: string,
+  password_confirmation: string
 ): Promise<ApiResponse<AuthData>> {
   const res = await fetch(`${BASE_URL}/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, email, password }),
+    body: JSON.stringify({ name, email, password, password_confirmation }),
   });
   const json: ApiResponse<AuthData> = await res.json();
-  if (!res.ok) throw new Error(json.message);
+  if (!res.ok) throw new ApiError(json.message, json.data as Record<string, string[]> | null);
   return json;
 }
 
@@ -40,7 +49,7 @@ export async function login(
     body: JSON.stringify({ email, password }),
   });
   const json: ApiResponse<AuthData> = await res.json();
-  if (!res.ok) throw new Error(json.message);
+  if (!res.ok) throw new ApiError(json.message, json.data as Record<string, string[]> | null);
   return json;
 }
 
@@ -49,7 +58,7 @@ export async function getUser(token: string): Promise<ApiResponse<UserData>> {
     headers: { Authorization: `Bearer ${token}` },
   });
   const json: ApiResponse<UserData> = await res.json();
-  if (!res.ok) throw new Error(json.message);
+  if (!res.ok) throw new ApiError(json.message, json.data as Record<string, string[]> | null);
   return json;
 }
 
@@ -59,6 +68,6 @@ export async function logout(token: string): Promise<ApiResponse<null>> {
     headers: { Authorization: `Bearer ${token}` },
   });
   const json: ApiResponse<null> = await res.json();
-  if (!res.ok) throw new Error(json.message);
+  if (!res.ok) throw new ApiError(json.message, json.data as Record<string, string[]> | null);
   return json;
 }

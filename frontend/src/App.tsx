@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from "./AuthContext";
 import Header from "./components/Header";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
+import Register from "./pages/Register";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { token } = useAuth();
@@ -15,6 +16,7 @@ function AppRoutes() {
       <Header />
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route
           path="/"
           element={
